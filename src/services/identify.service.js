@@ -68,7 +68,6 @@ exports.handleIdentify = async (email, phoneNumber) => {
       },
     });
   }  
-
   //check if new info needs new secondary
   const emails = new Set(allRelatedContacts.map((c) => c.email).filter(Boolean));
   const phones = new Set(allRelatedContacts.map((c) => c.phoneNumber).filter(Boolean));
@@ -93,18 +92,30 @@ exports.handleIdentify = async (email, phoneNumber) => {
     if (email) emails.add(email);
     if (phoneNumber) phones.add(phoneNumber);
   }
+
+  const finalContacts = await prisma.contact.findMany({
+  where: {
+    OR: [
+      { id: primaryContact.id },
+      { linkedId: primaryContact.id },
+    ],
+   },
+  });
+const finalEmails = new Set(finalContacts.map(c => c.email).filter(Boolean));
+const finalPhones = new Set(finalContacts.map(c => c.phoneNumber).filter(Boolean));
+
   //this is final response
-  const secondaryContacts = allRelatedContacts.filter(
+  const secondaryContacts = finalContacts.filter(
     (c) => c.linkPrecedence === "secondary"
   );  
 
 
   return {
     contact: {
-      primaryContatctId: null,
-      emails: [],
-      phoneNumbers: [],
-      secondaryContactIds: []
-    }
+      primaryContatctId: primaryContact.id,
+      emails: Array.from(finalEmails),
+      phoneNumbers: Array.from(finalPhones),
+      secondaryContactIds: secondaryContacts.map((c) => c.id),
+    },
   };
 };
