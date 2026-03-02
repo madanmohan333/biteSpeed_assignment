@@ -1,12 +1,13 @@
 require("dotenv").config();
 const express=require("express");
 const app=express();
-const PORT=5000;
-const { PrismaClient }=require("@prisma/client");
-const prisma=new PrismaClient();
+const prisma=require("./config/prisma");
+const identifyRoute = require("./routes/identify.route");
 
+app.use(express.json());
+app.use("/identify",identifyRoute);
 
-
+const PORT=process.env.PORT || 5000;
 app.listen(PORT, async () => {
   try {
     await prisma.$connect();
