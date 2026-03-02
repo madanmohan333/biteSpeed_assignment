@@ -69,6 +69,33 @@ exports.handleIdentify = async (email, phoneNumber) => {
     });
   }  
 
+  //check if new info needs new secondary
+  const emails = new Set(allRelatedContacts.map((c) => c.email).filter(Boolean));
+  const phones = new Set(allRelatedContacts.map((c) => c.phoneNumber).filter(Boolean));
+
+  let newSecondary = null;
+
+  if (
+    (email && !emails.has(email)) ||
+    (phoneNumber && !phones.has(phoneNumber))
+  ) {
+    newSecondary = await prisma.contact.create({
+      data: {
+        email,
+        phoneNumber,
+        linkPrecedence: "secondary",
+        linkedId: primaryContact.id,
+      },
+    });
+
+    allRelatedContacts.push(newSecondary);
+
+    if (email) emails.add(email);
+    if (phoneNumber) phones.add(phoneNumber);
+  }
+
+  
+
   return {
     contact: {
       primaryContatctId: null,
