@@ -19,7 +19,19 @@ exports.handleIdentify = async (email, phoneNumber) => {
         phoneNumber,
         linkPrecedence: "primary",
       },
-  });  
+    });
+
+    return {
+      contact: {
+        primaryContatctId: newContact.id,
+        emails: email ? [email] : [],
+        phoneNumbers: phoneNumber ? [phoneNumber] : [],
+        secondaryContactIds: [],
+      },
+    };
+  }  
+
+
 
   return {
     contact: {
