@@ -93,8 +93,11 @@ exports.handleIdentify = async (email, phoneNumber) => {
     if (email) emails.add(email);
     if (phoneNumber) phones.add(phoneNumber);
   }
+  //this is final response
+  const secondaryContacts = allRelatedContacts.filter(
+    (c) => c.linkPrecedence === "secondary"
+  );  
 
-  
 
   return {
     contact: {
