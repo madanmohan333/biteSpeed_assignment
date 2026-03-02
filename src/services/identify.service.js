@@ -53,7 +53,8 @@ exports.handleIdentify = async (email, phoneNumber) => {
     .filter((c) => c.linkPrecedence === "primary")
     .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))[0];
 
-  //convert other primaries to secondary if need
+  //convert other primaries to secondary if needed
+  
   const otherPrimaries = allRelatedContacts.filter(
     (c) =>
       c.linkPrecedence === "primary" && c.id !== primaryContact.id
